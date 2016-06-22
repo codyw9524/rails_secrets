@@ -1,0 +1,29 @@
+<h1>Hello <%=@user[:name]%></h1>
+<a href="/users/<%=@user[:id]%>/edit">Edit Profile</a>
+
+<form action='/secrets' method="post">
+	<input type="hidden" name="authenticity_token" value="<%=form_authenticity_token%>">
+	<input type="hidden" name="secret[user_id]" value="<%=@user[:id]%>">
+	<label for="content">New Secret</label>
+	<textarea id="content" name="secret[content]"></textarea>
+	<input type="submit" value="Post Secret">
+</form>
+<h2><%=@user[:name]%>'s Secrets</h2>
+<ul>
+	<% if @secrets %>
+		<% @secrets.each do |s| %>
+			<li>
+				<%=s.content%> -- <%= s.likes.count %> Like<%= "s" unless s.likes.count == 1%>
+
+				<% if s.user_id == session[:user_id] %>
+					<form action="/secrets/<%= s[:id] %>" method="post">
+						<input type="hidden" name="authenticity_token" value="<%=form_authenticity_token%>">
+						<input type="hidden" name="_method" value="delete">
+						<input type="submit" value="Delete">
+					</form>
+				<% end %>
+
+			</li>
+		<% end %>
+	<% end %>
+</ul>
